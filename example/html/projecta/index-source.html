@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8" />
+        <title>
+            测试页面
+        </title>
+        <meta http-equiv="pragma" content="no-cache" />
+		#if(debug)
+        <link rel="stylesheet/less" type="text/css" href="css/a.less">
+        <script src="js/less.js"></script>
+		#else
+		<link rel="stylesheet" type="text/css" href="${getVersion('projecta/css/main.css')}">
+		#end
+    </head>
+    
+    <body>
+    	#if(debug)
+		<script src="js/a.js"></script>
+		#else
+		<script src="${getVersion('projecta/js/main.js')}"></script>
+		#end
+    </body>
+
+</html>
