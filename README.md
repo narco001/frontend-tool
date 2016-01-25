@@ -28,3 +28,6 @@
 		- environment 可添加测试环境、生产环境等,url-该环境下静态文件的根目录,name-环境名称
 	- grunt目录下的package.json
 		- root 您的本地项目路径
+	- grunt目录下的project目录
+		- project-list.json 增加删除项目
+		- 其余文件：project-list.json中项目对应的grunt配置文件
