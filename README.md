@@ -20,3 +20,11 @@
 	- git config user.name yourname
 	- git config user.email yourname@test.com
 - 目录结构：node-webkit下的文件直接复制到安装完的nodewebkit目录下；grunt目录为测试grunt配置；example为测试项目
+- 配置文件：
+	- node-webkit下的config.json
+		- git 远程git地址(https)
+		- grunt 本地grunt目录
+		- hasHtml 是否需要自动编译和打包html文件
+		- environment 可添加测试环境、生产环境等,url-该环境下静态文件的根目录,name-环境名称
+	- grunt目录下的package.json
+		- root 您的本地项目路径
