@@ -12,7 +12,7 @@
 - git、node、grunt环境
 - 安装node webkit，http://nwjs.io/
 - 配置全局变量，添加git、beyondcompare到path
-- git配置，本工具使用git https的方式
+- git配置，本工具使用git https(ssh您可以自行尝试)的方式
 	- git config --global diff.tool bc3
 	- git config --global difftool.bc3.cmd 'BCompare "$LOCAL" "$REMOTE"'
 	- git config --global difftool.prompt false
