@@ -1,0 +1,23 @@
+{
+  "name": "webfront",
+  "main": "index.html",
+  "window": {
+    "resizable": false,
+    "fullscreen": false,
+    "width": 1000,
+    "height": 600
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "async": "~1.5.2",
+    "http": "~0.0.0",
+    "jszip": "~2.5.0",
+    "mockjs": "~1.0.0",
+    "request": "~2.67.0",
+    "simple-git": "~1.21.0",
+    "url": "~0.11.0",
+    "pjs": "~5.1.1",
+    "jquery": "~2.2.0",
+    "bootstrap": "~3.3.6"
+  }
+}

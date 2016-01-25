@@ -1,0 +1,13 @@
+{
+  "name": "frontend",
+  "root": "D:/xampp/htdocs/grunt-nodewebkit/examples/examples-nohtml",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-cachebuster": "~0.1.5",
+    "grunt-contrib-less": "~1.0.1",
+    "grunt-contrib-uglify": "~0.9.1",
+    "grunt-contrib-copy": "~0.8.0",
+    "grunt-contrib-concat": "~0.5.1",
+    "underscore": "~1.7.0"
+  }
+}

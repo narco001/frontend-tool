@@ -1,0 +1,15 @@
+{
+  "git": "D:/xampp/htdocs/grunt-nodewebkit/git",
+  "grunt": "D:/xampp/htdocs/grunt-nodewebkit/examples/grunt",
+  "hasHtml": 0,
+  "environment": {
+  	"dev": {
+  		"url": "http://192.168.12.250/ui/test",
+  		"name": "测试环境"
+  	},
+  	"online": {
+  		"url": "http://www.17english.com/ui/test",
+  		"name": "生产环境"
+  	}
+  }
+}

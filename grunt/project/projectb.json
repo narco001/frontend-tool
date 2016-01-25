@@ -1,0 +1,59 @@
+{
+  "concat": {
+    "lib": {
+      "src": [
+        "<%= pkg.root %>/projectb/js/a.js",
+        "<%= pkg.root %>/projectb/js/b.js"
+      ],
+      "dest": "<%= pkg.root %>/build/projectb/js/main.js"
+    }
+  },
+  "uglify": {
+    "lib": {
+      "files": {
+        "<%= pkg.root %>/dist/projectb/js/main.js": [
+          "<%= pkg.root %>/projectb/js/a.js",
+          "<%= pkg.root %>/projectb/js/b.js"
+        ]
+      }
+    }
+  },
+  "copy": {
+    "imgBuild": {
+      "files": [
+        {
+          "expand": true,
+          "cwd": "<%= pkg.root %>/projectb/img",
+          "src": ["**/*"], 
+          "dest": "<%= pkg.root %>/dist/projectb/img"
+        }
+      ]
+    },
+    "imgDist": {
+      "files": [
+        {
+          "expand": true,
+          "cwd": "<%= pkg.root %>/projectb/img",
+          "src": ["**/*"], 
+          "dest": "<%= pkg.root %>/dist/projectb/img"
+        }
+      ]
+    }
+  },
+  "less": {
+    "build": {
+      "options": {},
+      "files": {
+        "<%= pkg.root %>/build/projectb/css/main.css": "<%= pkg.root %>/projectb/css/a.less"
+      }
+    },
+    "dist": {
+      "options": {
+        "compress": true
+      },
+      "files": {
+         "<%= pkg.root %>/dist/projectb/css/main.css": "<%= pkg.root %>/projectb/css/a.less"
+      }
+    }
+  }
+}

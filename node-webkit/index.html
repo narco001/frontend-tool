@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    
+  <head>
+      <meta charset="utf-8" />
+      <title>
+          前端构建、打包
+      </title>
+      <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+      <style type="text/css">
+      .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        display: block;
+        padding: 15px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background-color: #f5f5f5;
+        border-right: 1px solid #eee;
+      }
+      .sidebar .tip{
+        margin-left:10px;
+        font-size: 12px;
+        color:#999;
+      }
+      .sidebar h2{
+        border-bottom: 1px solid #ddd;
+        font-size: 16px;
+        padding-bottom: 10px;
+        font-weight: bold;
+        color:#333;
+      }
+
+      .nav-sidebar {
+        padding-bottom: 20px;
+        margin-left:-20px;
+        margin-right:-20px;
+        overflow-y:auto;
+
+      }
+      .nav-sidebar > li > a {
+        padding:5px 20px;
+        font-size: 14px;
+        color:#666;
+      }
+      .nav-sidebar > .active > a,
+      .nav-sidebar > .active > a:hover,
+      .nav-sidebar > .active > a:focus {
+        color: #fff;
+        background-color: #428bca;
+      }
+
+      .main {
+        position: absolute;
+        height: 100%;
+        box-sizing:border-box;
+        padding: 20px;
+      }
+
+      .ui-log{
+        float:left;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border:1px solid #ddd;
+        background:#fff;
+        box-shadow: 1px 1px 5px #ddd;
+      }
+      .ui-log .inner{
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;  
+      }
+
+      .ui-log .title{
+        position: absolute;
+        right:0;
+        top:0;
+        padding:8px 10px;
+        background: #159fe5;
+        color:#fff;
+        font-size: 14px;
+      }
+
+      .item-log{
+        padding:5px 10px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .item-log-list{
+        color: #999;
+      }
+
+      .item-log-error{
+        color: #ff6600;
+      }
+
+      .file-info{
+        margin-left:20px;
+      }
+
+      .btn-compare{
+        font-size: 14px;
+        padding:5px 20px;
+      }
+
+      </style>
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3 sidebar">
+          <div class="ui-box">
+            <h2>环境</h2>
+            <ul class="nav nav-sidebar ui-env"> </ul>
+          </div>
+          <div class="ui-box">
+            <h2>项目<span class="tip">(构建打包前务必先选择)</span></h2>
+            <ul class="nav nav-sidebar ui-project"> </ul>
+          </div>
+          <div class="ui-box">
+            <h2>操作</h2>
+            <div class="wrapper">
+              <button type="button" class="btn btn-primary btn-grunt">构建</button>
+              <button type="button" class="btn btn-primary btn-pack">打包</button>
+              <button type="button" class="btn btn-primary btn-pack-html" style="display:none;">打包html</button>
+            </div>
+          </div>
+         
+        </div>
+        <div class="col-md-9 col-md-offset-3 main">
+          <div class="ui-log">
+            <div class="title">
+              构建、打包日志
+            </div>
+            <div class="inner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="scripts/main.js"></script>
+  </body>
+
+</html>
