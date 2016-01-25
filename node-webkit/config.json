@@ -4,11 +4,11 @@
   "hasHtml": 0,
   "environment": {
   	"dev": {
-  		"url": "http://192.168.12.250/ui/test",
+  		"url": "http://DEV-ENVIRONMENT",
   		"name": "测试环境"
   	},
   	"online": {
-  		"url": "http://www.17english.com/ui/test",
+  		"url": "http://ONLINE-ENVIRONMENT",
   		"name": "生产环境"
   	}
   }
