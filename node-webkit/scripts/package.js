@@ -251,17 +251,19 @@ var Statics = P(Package, function(s, parent){
         var gitInfo = gitLog && gitLog.all && gitLog.all[0];
         var fileMap = me.selectedFileMap;
         var project = fileInfo.result.replace(/([^\/]*)\/.*/, '$1');
+        // console.log(me.selectedFileMap)
         if(versionFile.indexOf('.css') !== -1){
             fs.readFile(versionFile, 'utf8', function(err, data){
                 var name = data.match(/[^\/]+\.(jpg|gif|png|eot|ttf|woff|svg)/g);
+                var bgNameList = data.match(/url\(["']*(.*?)["']*\)/g);
                 
                 for(var j in fileMap){
                     var fullFileName = j;
                     var staticsPath = fullFileName.replace(/^[^\/]*\/([^\/]*)\/.*$/, '$1');
                     var fileName = j.substr(j.lastIndexOf('/')+1);
                     var basePath = project + '/' + staticsPath;
-                    
-                    if(name.indexOf(fileName) !== -1 && fullFileName.indexOf(basePath) !== -1){
+                    //当前项目下的文件和非当前项目下的文件均需添加版本号
+                    if((name.indexOf(fileName) !== -1 && fullFileName.indexOf(basePath) !== -1) || isIn(fullFileName, bgNameList)){
                       var fileArr = fileName.split('.');
                       fileArr[0] += '_'+fileMap[j];
                       var curFileName = fileArr.join('.');
@@ -279,6 +281,16 @@ var Statics = P(Package, function(s, parent){
         }else{
             callback(null, versionFile, gitInfo, fileInfo);
         };
+
+        function isIn(val, list){
+            var result = false;
+            list.forEach(function(o, i){
+                if(o.indexOf(val) !== -1){
+                    result = true;
+                }
+            });
+            return result;
+        }
     }
 
     /**
