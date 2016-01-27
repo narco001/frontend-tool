@@ -279,12 +279,21 @@ var Statics = P(Package, function(s, parent){
                     var fileName = j.substr(j.lastIndexOf('/')+1);
                     var basePath = project + '/' + staticsPath;
                     //当前项目下的文件和非当前项目下的文件均需添加版本号
-                    if((name.indexOf(fileName) !== -1 && fullFileName.indexOf(basePath) !== -1) || isIn(fullFileName, bgNameList)){
+                    var isInProject = (name.indexOf(fileName) !== -1 && fullFileName.indexOf(basePath) !== -1);
+                    var isInOtherProject = isIn(fullFileName, bgNameList);
+                    if(isInProject || isInOtherProject){
+
                       var fileArr = fileName.split('.');
                       fileArr[0] += '_'+fileMap[j];
-                      var curFileName = fileArr.join('.');
-                      data = data.replace(new RegExp('/'+fileName, 'g'), '/'+curFileName);
                       
+                      var curFileName = fileArr.join('.');
+                      
+                      if(isInProject){
+                        data = data.replace(new RegExp('\\.\\.\\/'+staticsPath+'\\/'+fileName, 'g'), '../'+staticsPath+'/'+curFileName);
+                      }
+                      if(isInOtherProject){
+                        data = data.replace(new RegExp(fullFileName), fullFileName.replace(/\/[^\/]+$/g, '/'+curFileName));
+                      }
                     }
                 }
 
@@ -435,14 +444,15 @@ var Statics = P(Package, function(s, parent){
                         var from = cfg.distRoot + '/' + o[0];
 
                         cfg.copyFile(from, file, function(){
-                            fs.writeFile(file, body, function (err) {
-                                cfg.log(o[0], {isList: true});
-                                cfg.log(o[2] + ' 只更新了内部静态文件的版本号，文件名：<i style="color:red">'+staticsFilesMatch.join('|')+'</i>', {isList: true});
-                                if (err) throw err;
-                                scanLength--;
-                                if(scanLength === 0){
-                                    cb();
-                                }
+                            exec('rm -rf '+'statics/' + cfg.baseRoot + '/' + o[0],function(err,out) {
+                                fs.writeFile(file, body, function (err) {
+                                    cfg.log(o[2] + ' 只更新了内部静态文件的版本号，文件名：<i style="color:red">'+staticsFilesMatch.join('|')+'</i>', {isList: true});
+                                    if (err) throw err;
+                                    scanLength--;
+                                    if(scanLength === 0){
+                                        cb();
+                                    }
+                                });
                             });
                         });
                         
