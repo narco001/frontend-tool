@@ -263,6 +263,7 @@ var Statics = P(Package, function(s, parent){
         var fileMap = me.selectedFileMap;
         var project = fileInfo.result.replace(/([^\/]*)\/.*/, '$1');
         var staticsFilesReg = /[^\/]+\.(jpg|gif|png|eot|ttf|woff|svg)/g;
+        var imgReg = /^([^\/]+\/)*(img|images|image|imgs.*?)$/g;
         if(staticsFilesReg.test(versionFile)){
             me.staticsFiles.push(fileInfo);
         }
@@ -275,12 +276,14 @@ var Statics = P(Package, function(s, parent){
                 
                 for(var j in fileMap){
                     var fullFileName = j;
-                    var staticsPath = fullFileName.replace(/^[^\/]*\/([^\/]*)\/.*$/, '$1');
+                    var staticsPath = fullFileName.replace(/^[^\/]*\/(.*)\/[^\/]*$/, '$1');
                     var fileName = j.substr(j.lastIndexOf('/')+1);
                     var basePath = project + '/' + staticsPath;
+
                     //当前项目下的文件和非当前项目下的文件均需添加版本号
                     var isInProject = (name.indexOf(fileName) !== -1 && fullFileName.indexOf(basePath) !== -1);
-                    var isInOtherProject = isIn(fullFileName, bgNameList);
+                    var isInOtherProject = fullFileName.indexOf(basePath) === -1 && isIn(fullFileName, bgNameList);
+                    
                     if(isInProject || isInOtherProject){
 
                       var fileArr = fileName.split('.');
@@ -289,10 +292,16 @@ var Statics = P(Package, function(s, parent){
                       var curFileName = fileArr.join('.');
                       
                       if(isInProject){
-                        data = data.replace(new RegExp('\\.\\.\\/'+staticsPath+'\\/'+fileName, 'g'), '../'+staticsPath+'/'+curFileName);
+                        var path = staticsPath.replace(imgReg, function($0, $1, $2){
+                            return $2;
+                        });
+                        
+                        //too ugly, 这块逻辑需要调整
+                        data = data.replace(new RegExp('\\.\\.\\/'+path+'\\/'+fileName, 'g'), '../'+path+'/'+curFileName);
+                        data = data.replace(new RegExp('\\.\\.\\/'+project+'\\/'+path+'\\/'+fileName, 'g'), '../'+project+'/'+path+'/'+curFileName);
                       }
                       if(isInOtherProject){
-                        data = data.replace(new RegExp(fullFileName), fullFileName.replace(/\/[^\/]+$/g, '/'+curFileName));
+                        data = data.replace(new RegExp(fullFileName, 'g'), fullFileName.replace(/\/[^\/]+$/g, '/'+curFileName));
                       }
                     }
                 }
