@@ -25,7 +25,7 @@
           "expand": true,
           "cwd": "<%= pkg.root %>/common/img",
           "src": ["**/*"], 
-          "dest": "<%= pkg.root %>/dist/common/img"
+          "dest": "<%= pkg.root %>/build/common/img"
         }
       ]
     },

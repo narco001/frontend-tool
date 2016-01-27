@@ -25,7 +25,7 @@
           "expand": true,
           "cwd": "<%= pkg.root %>/projectb/img",
           "src": ["**/*"], 
-          "dest": "<%= pkg.root %>/dist/projectb/img"
+          "dest": "<%= pkg.root %>/build/projectb/img"
         }
       ]
     },

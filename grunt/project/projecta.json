@@ -25,7 +25,7 @@
           "expand": true,
           "cwd": "<%= pkg.root %>/projecta/img",
           "src": ["**/*"], 
-          "dest": "<%= pkg.root %>/dist/projecta/img"
+          "dest": "<%= pkg.root %>/build/projecta/img"
         }
       ]
     },
@@ -53,6 +53,20 @@
       },
       "files": {
          "<%= pkg.root %>/dist/projecta/css/main.css": "<%= pkg.root %>/projecta/css/a.less"
+      }
+    },
+    "cbuild": {
+      "options": {},
+      "files": {
+        "<%= pkg.root %>/build/projecta/css/c.css": "<%= pkg.root %>/projecta/css/c.less"
+      }
+    },
+    "cdist": {
+      "options": {
+        "compress": true
+      },
+      "files": {
+         "<%= pkg.root %>/dist/projecta/css/c.css": "<%= pkg.root %>/projecta/css/c.less"
       }
     }
   }
