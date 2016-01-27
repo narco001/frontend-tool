@@ -15,6 +15,8 @@ var Package = P(function(s){
        this.selectedFileMap = {}; //选中项目下的文件
        this.scanLength = 0; //扫描文件数
        this.fileLength = 0; //需打包的文件数
+       this.staticsFiles = []; //需打包的非js、css文件
+       this.changedCssList = []; //更新过的css文件
     };
 
     /**
@@ -55,7 +57,7 @@ var Package = P(function(s){
 
             if(update) {
                 fs.readFile(cfg.localRepo+'/config.json', 'utf8', function(err, data){
-                    console.log(me.fileMap)
+                    
                     me.fileMap = JSON.parse(data);
                     
                     me.extract();
@@ -70,10 +72,18 @@ var Package = P(function(s){
     }
 
     s.checkLength = function(){
-        this.scanLength--;
+        var me = this;
+        me.scanLength--;
         
-        if(this.scanLength === 0){
-            this.generateZip();
+        if(me.scanLength === 0){
+            if(me.staticsFiles.length > 0){
+                me.changeCssByStatics(function(){
+                    me.generateZip()
+                });
+            }else{
+                me.generateZip();
+            }
+            
         }
     }
 
@@ -184,6 +194,7 @@ var Statics = P(Package, function(s, parent){
                 me.getRemoteFile(fileInfo, callback);
             }, 
             function (versionFile, from, fileInfo, callback) {
+
                 me.git.log({
                     file: from.replace(/^data\/(.*)$/, '$1')
                 }, function(err, data){
@@ -251,10 +262,15 @@ var Statics = P(Package, function(s, parent){
         var gitInfo = gitLog && gitLog.all && gitLog.all[0];
         var fileMap = me.selectedFileMap;
         var project = fileInfo.result.replace(/([^\/]*)\/.*/, '$1');
-        // console.log(me.selectedFileMap)
+        var staticsFilesReg = /[^\/]+\.(jpg|gif|png|eot|ttf|woff|svg)/g;
+        if(staticsFilesReg.test(versionFile)){
+            me.staticsFiles.push(fileInfo);
+        }
+
         if(versionFile.indexOf('.css') !== -1){
+            me.changedCssList.push(fileInfo);
             fs.readFile(versionFile, 'utf8', function(err, data){
-                var name = data.match(/[^\/]+\.(jpg|gif|png|eot|ttf|woff|svg)/g);
+                var name = data.match(staticsFilesReg);
                 var bgNameList = data.match(/url\(["']*(.*?)["']*\)/g);
                 
                 for(var j in fileMap){
@@ -340,6 +356,101 @@ var Statics = P(Package, function(s, parent){
         }else{
             callback(versionFile);
         }
+    }
+
+    /**
+     * [图片、字体等文件更新，需要遍历css更新内部版本号]
+     */
+    s.changeCssByStatics = function(cb){
+        var me = this;
+        var staticsFiles = $.extend(true, [], me.staticsFiles);
+        var selectedFileMap = me.selectedFileMap;
+        var changedCssList = me.changedCssList;
+        
+        var cssList = [];
+        var scanLength = 0;
+        for (var i in selectedFileMap) {
+            if(i.indexOf('.css') !== -1){
+                var result = true;
+                changedCssList.forEach(function(v, k){
+                    if(v.noversionResult == i){
+                        result = false;
+                    }
+                });
+                if(result){
+                    var index = i.lastIndexOf('.');
+                    var name = i.substr(0, index);
+                    var fileType = i.substr(index+1);
+
+                    var versionFile = name + '_' + selectedFileMap[i] + '.' + fileType;
+                    cssList.push([i, selectedFileMap[i], versionFile]);
+                }
+                
+            }
+        };
+        
+        cssList.forEach(function(o, i){
+
+            var files = $.extend(true, [], me.staticsFiles);
+
+            var project = o[0].replace(/([^\/]*)\/.*/, '$1');
+            files.forEach(function(v, k){
+                var file = v.noversionResult;
+                var versionFile = v.result;
+
+                if(file.indexOf(project) === 0){
+                    files[k].noversionResult = file.replace(new RegExp(project, 'g'), '..');
+                    files[k].result = versionFile.replace(new RegExp(project, 'g'), '..');
+                }
+            });
+            
+            
+            var remoteFile = cfg.curEnv.url + '/' + o[2];
+
+            request(remoteFile, function (error, response, body) {
+                if (!error) {
+                    var result = false;
+                    var staticsFilesMatch = [];
+                    files.forEach(function(v, k){
+                        var reg;
+                        v.result.replace(/(^.*?_)\w{8}(.\w+)$/g, function($1, $2, $3){
+                            
+                            reg = $2 + '\\w{8}' + $3;
+                            reg = reg.replace(/[\.\/]/g, function(a, b){
+                                return '\\'+a;
+                            });
+                        });
+                        reg = new RegExp(reg, 'g');
+                        if(reg.test(body)){
+                            result = true;
+                            body = body.replace(reg, v.result);
+                            staticsFilesMatch.push(v.noversionResult);
+                        }
+                        
+                    });
+                    if(result){
+                        scanLength++;
+
+                        var file = 'statics/' + cfg.baseRoot + '/' + o[2];
+                        var from = cfg.distRoot + '/' + o[0];
+
+                        cfg.copyFile(from, file, function(){
+                            fs.writeFile(file, body, function (err) {
+                                cfg.log(o[0], {isList: true});
+                                cfg.log(o[2] + ' 只更新了内部静态文件的版本号，文件名：<i style="color:red">'+staticsFilesMatch.join('|')+'</i>', {isList: true});
+                                if (err) throw err;
+                                scanLength--;
+                                if(scanLength === 0){
+                                    cb();
+                                }
+                            });
+                        });
+                        
+                    }
+                }
+                
+            }); 
+        });
     }
 
 });
@@ -488,6 +599,7 @@ var Html = P(Package, function(s, parent){
         var me = this;
         var file = fileInfo.file;
         var to = file.replace(/^data/g, 'html');
+
         cfg.copyFile(file, to, function(){
             callback(null, to, fileInfo);
         });
@@ -503,6 +615,7 @@ var Html = P(Package, function(s, parent){
         var me = this;
         var str = '<!-- version:'+ fileInfo.version +' -->\n\r';
         var to = 'html/' + fileInfo.result;
+
         cfg.generateFile(to, file, false, function(){
             exec('rm -rf '+file,function(err,out) { 
                 callback(null, to, str);
@@ -520,10 +633,12 @@ var Html = P(Package, function(s, parent){
         var reg = /\$\{getVersion\(\'(.*?)\'\)\}/g;
         var result = [];
         fs.readFile(file, 'utf8', function(err, data){
+
             var fileName;
             while(fileName = reg.exec(data)){
-                result.push(fileName[1]);
 
+                result.push(fileName[1]);
+                
                 var versionFile = cfg.getVersion(fileName[1], me.selectedFileMap);
                 
                 data = data.replace(fileName[0], versionFile);
