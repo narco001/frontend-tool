@@ -33,5 +33,5 @@
 		- 其余文件：project-list.json中项目对应的grunt配置文件
 
 ###注意事项
-	- 使用jwt等纯web service方式加载数据的项目建议使用example/html下的例子，页面使用.html文件，配置hasHtml为true即可以使用html的自动编译和打包功能
-	- 使用.jsp,.php等服务端语言的页面，您需要在gruntfile中自行生成带版本号的文件(需要和构建生成的config.json中的文件的md5值保持一致)。页面中需要加上诸如$getVersion('projecta/css/main.css')这样的方法生成文件的版本号
+- 使用jwt等纯web service方式加载数据的项目建议使用example/html下的例子，页面使用.html文件，配置hasHtml为true即可以使用html的自动编译和打包功能
+- 使用.jsp,.php等服务端语言的页面，您需要在gruntfile中自行生成带版本号的文件(需要和构建生成的config.json中的文件的md5值保持一致)。页面中需要加上诸如$getVersion('projecta/css/main.css')这样的方法生成文件的版本号
