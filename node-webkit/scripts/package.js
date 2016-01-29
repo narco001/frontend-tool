@@ -76,6 +76,7 @@ var Package = P(function(s){
         me.scanLength--;
         
         if(me.scanLength === 0){
+
             if(me.staticsFiles.length > 0){
                 me.changeCssByStatics(function(){
                     me.generateZip()
@@ -407,69 +408,82 @@ var Statics = P(Package, function(s, parent){
             }
         };
         
-        cssList.forEach(function(o, i){
+        if(!cssList.length){
+            cb();
+        }else{
+            var hasMatch = false;
+            var cssLength = 0;
+            cssList.forEach(function(o, i){
+                cssLength++;
+                var files = $.extend(true, [], me.staticsFiles);
 
-            var files = $.extend(true, [], me.staticsFiles);
+                var project = o[0].replace(/([^\/]*)\/.*/, '$1');
+                files.forEach(function(v, k){
+                    var file = v.noversionResult;
+                    var versionFile = v.result;
 
-            var project = o[0].replace(/([^\/]*)\/.*/, '$1');
-            files.forEach(function(v, k){
-                var file = v.noversionResult;
-                var versionFile = v.result;
+                    if(file.indexOf(project) === 0){
+                        files[k].noversionResult = file.replace(new RegExp(project, 'g'), '..');
+                        files[k].result = versionFile.replace(new RegExp(project, 'g'), '..');
+                    }
+                });
+                
+                
+                var remoteFile = cfg.curEnv.url + '/' + o[2];
 
-                if(file.indexOf(project) === 0){
-                    files[k].noversionResult = file.replace(new RegExp(project, 'g'), '..');
-                    files[k].result = versionFile.replace(new RegExp(project, 'g'), '..');
-                }
-            });
-            
-            
-            var remoteFile = cfg.curEnv.url + '/' + o[2];
-
-            request(remoteFile, function (error, response, body) {
-                if (!error) {
-                    var result = false;
-                    var staticsFilesMatch = [];
-                    files.forEach(function(v, k){
-                        var reg;
-                        v.result.replace(/(^.*?_)\w{8}(.\w+)$/g, function($1, $2, $3){
-                            
-                            reg = $2 + '\\w{8}' + $3;
-                            reg = reg.replace(/[\.\/]/g, function(a, b){
-                                return '\\'+a;
-                            });
-                        });
-                        reg = new RegExp(reg, 'g');
-                        if(reg.test(body)){
-                            result = true;
-                            body = body.replace(reg, v.result);
-                            staticsFilesMatch.push(v.noversionResult);
-                        }
+                request(remoteFile, function (error, response, body) {
+                    if (!error) {
+                        var result = false;
+                        var staticsFilesMatch = [];
                         
-                    });
-                    if(result){
-                        scanLength++;
-
-                        var file = 'statics/' + cfg.baseRoot + '/' + o[2];
-                        var from = cfg.distRoot + '/' + o[0];
-
-                        cfg.copyFile(from, file, function(){
-                            exec('rm -rf '+'statics/' + cfg.baseRoot + '/' + o[0],function(err,out) {
-                                fs.writeFile(file, body, function (err) {
-                                    cfg.log(o[2] + ' 只更新了内部静态文件的版本号，文件名：<i style="color:red">'+staticsFilesMatch.join('|')+'</i>', {isList: true});
-                                    if (err) throw err;
-                                    scanLength--;
-                                    if(scanLength === 0){
-                                        cb();
-                                    }
+                        files.forEach(function(v, k){
+                            var reg;
+                            v.result.replace(/(^.*?_)\w{8}(.\w+)$/g, function($1, $2, $3){
+                                
+                                reg = $2 + '\\w{8}' + $3;
+                                reg = reg.replace(/[\.\/]/g, function(a, b){
+                                    return '\\'+a;
                                 });
                             });
+                            reg = new RegExp(reg, 'g');
+                            if(reg.test(body)){
+                                result = true;
+                                hasMatch = true;
+                                body = body.replace(reg, v.result);
+                                staticsFilesMatch.push(v.noversionResult);
+                            }
+                            
                         });
-                        
+                        if(result){
+                            scanLength++;
+
+                            var file = 'statics/' + cfg.baseRoot + '/' + o[2];
+                            var from = cfg.distRoot + '/' + o[0];
+
+                            cfg.copyFile(from, file, function(){
+                                exec('rm -rf '+'statics/' + cfg.baseRoot + '/' + o[0],function(err,out) {
+                                    fs.writeFile(file, body, function (err) {
+                                        cfg.log(o[2] + ' 只更新了内部静态文件的版本号，文件名：<i style="color:red">'+staticsFilesMatch.join('|')+'</i>', {isList: true});
+                                        if (err) throw err;
+                                        scanLength--;
+
+                                        if(scanLength === 0){
+                                            cb();
+                                        }
+                                    });
+                                });
+                            });
+                        }
+                        cssLength--;
+                        //更新的静态文件没有涉及到css的改动
+                        if(cssLength == 0 && !hasMatch){
+                            cb();
+                        }
                     }
-                }
-                
-            }); 
-        });
+                    
+                }); 
+            });
+        }
     }
 
 });
