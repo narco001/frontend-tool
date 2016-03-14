@@ -5,11 +5,13 @@
   "environment": {
   	"dev": {
   		"url": "http://DEV-ENVIRONMENT",
-  		"name": "测试环境"
+  		"name": "测试环境",
+      "branch": "develop"
   	},
   	"online": {
   		"url": "http://ONLINE-ENVIRONMENT",
-  		"name": "生产环境"
+  		"name": "生产环境",
+      "branch": "master"
   	}
   }
 }

@@ -86,12 +86,12 @@ var Main = P(function(s){
     	var env = cfg.environment;
     	var hasSet = false;
     	for(var i in env){
-    		var $item = $('<li data-env="'+i+'"><a href="###">'+env[i]['name']+'</a></li>').appendTo('.ui-env');
+    		var $item = $('<li data-env="'+i+'" data-branch="'+env[i]['branch']+'"><a href="###">'+env[i]['name']+'</a></li>').appendTo('.ui-env');
     		
     		if(!hasSet){
     			hasSet = true;
     			$item.addClass('active');
-    			cfg.setEnv(i);
+    			cfg.setEnv(i, env[i]['branch']);
     		}
     	}
 		

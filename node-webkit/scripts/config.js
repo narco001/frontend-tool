@@ -14,8 +14,10 @@ var config = {
 	distRoot: '',  //本地压缩文件
 	hasHtml: 0, //是否需要自动编译和打包html文件
 	curEnv: {}, //当前环境
-	setEnv: function(env){
+	branch: 'master',
+	setEnv: function(env, branch){
 		this.curEnv = this.environment[env];
+		this.branch = branch;
 	},
 	/**
 	 * [log 输出信息]

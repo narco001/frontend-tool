@@ -68,8 +68,10 @@ var Views = P(function(s){
     s.setEnv = function(e){
         e.preventDefault();
         $('.ui-env .active').removeClass('active');
-        var env = $(e.currentTarget).toggleClass('active').data('env');
-        cfg.setEnv(env);
+        var $target = $(e.currentTarget).toggleClass('active');
+        var env = $target.data('env');
+        var branch = $target.data('branch');
+        cfg.setEnv(env, branch);
     };
 
     /**

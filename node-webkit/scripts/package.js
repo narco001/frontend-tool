@@ -53,7 +53,8 @@ var Package = P(function(s){
     s.gitPull = function(isHtml){
         var me = this;
         this.git = require('simple-git')(cfg.localRepo);
-        this.git.pull(cfg.git, 'master', function(err, update) {
+        
+        this.git.pull(cfg.git, cfg.branch, function(err, update) {
 
             if(update) {
                 fs.readFile(cfg.localRepo+'/config.json', 'utf8', function(err, data){
