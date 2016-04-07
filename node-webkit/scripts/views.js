@@ -22,6 +22,7 @@ var Views = P(function(s){
         $('body').on('click', '.btn-pack-html', this.pack.bind(s));
         $('body').on('click', '.ui-env li', this.setEnv.bind(s));
         $('body').on('click', '.btn-compare', this.compare.bind(s));
+        $('body').on('keyup', '.project-path', this.changePath.bind(s));
     };
 
     /**
@@ -86,6 +87,15 @@ var Views = P(function(s){
         var root = $target.data('build') ? cfg.localRepo + '/build' : cfg.localRepo;
         exec(command, {cwd: root});
     };
+
+    /**
+     * [更新项目路径]
+     */
+    s.changePath = function(e){
+        e.preventDefault();
+        var val = $.trim($(e.currentTarget).val());
+        window.localStorage.setItem('project-path', val);
+    }
 
 });
 

@@ -39,6 +39,7 @@ var Main = P(function(s){
         var me = this;
     	fs.readFile('./config.json', 'utf8', function(err, data){
 			try{
+                $('.project-path').val(window.localStorage.getItem('project-path') || '');
 				data = JSON.parse(data);
 				cfg.git = data.git;
 				cfg.grunt = data.grunt;
@@ -102,25 +103,23 @@ var Main = P(function(s){
      * [自动编译html]
      */
     s.autoBuild = function(){
-        fs.readFile(cfg.grunt + '/package.json', 'utf8', function(err, data){
-            try{
-                console.log(data)
-                data = JSON.parse(data);
-                var autoBuildFolders = cfg.scanFolder(data.root, null, [
-                    'statics/.git', 
-                    'statics/build', 
-                    'statics/dist',
-                    '/css',
-                    '/images',
-                    '/scripts',
-                    '/fonts'
-                ]);
-                autoBuildFolders = autoBuildFolders ? autoBuildFolders.folders : null;
-                if(autoBuildFolders){
-                    autoBuild(autoBuildFolders);
-                }
-            }catch(e){}
-        });
+        try{
+            var projectPath = $('.project-path').val();
+            var autoBuildFolders = cfg.scanFolder(projectPath, null, [
+                'statics/.git', 
+                'statics/build', 
+                'statics/dist',
+                '/css',
+                '/images',
+                '/scripts',
+                '/fonts'
+            ]);
+            autoBuildFolders = autoBuildFolders ? autoBuildFolders.folders : null;
+            
+            if(autoBuildFolders){
+                autoBuild(autoBuildFolders);
+            }
+        }catch(e){}
     }
 
     /**
