@@ -35,10 +35,14 @@ var Package = P(function(s){
                 this.gitPull();
             }else{
                 cfg.log('正在clone ' + cfg.git);
-                this.git.clone(cfg.git, cfg.localRepo, function(){
+                exec('git clone -b ' + cfg.branch + ' ' + cfg.git + ' ' + cfg.localRepo,function(err,out) { 
                     cfg.log('完成clone ' + cfg.git);
                     me.gitPull();
                 });
+                // this.git.clone(cfg.git, cfg.localRepo, function(){
+                //     cfg.log('完成clone ' + cfg.git);
+                //     me.gitPull();
+                // });
             }
         }else{
             cfg.log('请选择项目', {isError: true});
